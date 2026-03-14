@@ -1,5 +1,4 @@
 import random
-from market_data import crypto_price, metal_price
 
 def market_analysis():
     rsi = random.randint(30, 70)
@@ -14,7 +13,6 @@ def market_analysis():
         score += 10
     elif sentiment == "Bearish":
         score -= 10
-
     return f"""
 📊 AI MARKET ANALYSIS
 RSI : {rsi}
