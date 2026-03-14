@@ -3,12 +3,12 @@ from flask import Flask
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-# IMPORTS DE TES MODULES
+# Modules internes
 from reports import full_report
-from scanners import *
-from alerts import *
-from analysis import *
-from signals import *
+from alerts import crash, whale_alert
+from scanners import market_opportunity_scanner, liquidation_radar, manipulation_radar
+from analysis import market_analysis, btc_chart
+from signals import trading_signal
 from intel import crypto_news
 from market_data import crypto_price, metal_price
 
@@ -16,7 +16,6 @@ TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
 
 # ---------------- FLASK ----------------
 app = Flask(__name__)
-
 @app.route("/")
 def home():
     return "Bot running"
@@ -44,10 +43,7 @@ keyboard = [
 markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 Bot trading actif\n\nChoisis une analyse :",
-        reply_markup=markup
-    )
+    await update.message.reply_text("🤖 Bot trading actif\n\nChoisis une analyse :", reply_markup=markup)
 
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
@@ -61,8 +57,35 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text == "📈 Signal trading":
         await update.message.reply_text(trading_signal())
     elif text == "💰 BTC Analyse":
-        await update.message.reply_text(btc_analysis())
-    # Ajoute les autres options ici selon ton code existant
+        await update.message.reply_text(btc_chart())
+    elif text == "🔎 Scanner marché":
+        await update.message.reply_text(market_opportunity_scanner())
+    elif text == "📡 Radar liquidité":
+        await update.message.reply_text(liquidation_radar())
+    elif text == "🧠 Radar manipulation":
+        await update.message.reply_text(manipulation_radar())
+    elif text == "🤖 Analyse IA":
+        await update.message.reply_text(market_analysis())
+    elif text == "📊 Score marché":
+        await update.message.reply_text(market_analysis())
+    elif text == "🧭 Carte institutionnelle":
+        await update.message.reply_text(market_analysis())
+    elif text == "🪙 ETH Analyse":
+        price = crypto_price("ETH")
+        await update.message.reply_text(f"ETH Price: {price}$")
+    elif text == "☀️ SOL Analyse":
+        price = crypto_price("SOL")
+        await update.message.reply_text(f"SOL Price: {price}$")
+    elif text == "🥇 GOLD Analyse":
+        price = metal_price("XAU")
+        await update.message.reply_text(f"GOLD Price: {price}$")
+    elif text == "🥈 SILVER Analyse":
+        price = metal_price("XAG")
+        await update.message.reply_text(f"SILVER Price: {price}$")
+    elif text == "🤖 Analyse multi crypto":
+        await update.message.reply_text(f"BTC: {crypto_price('BTC')}$\nETH: {crypto_price('ETH')}$\nSOL: {crypto_price('SOL')}$")
+    elif text == "📆 Agenda économique":
+        await update.message.reply_text(crypto_news())
 
 def main():
     app_bot = ApplicationBuilder().token(TOKEN).build()
