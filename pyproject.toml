@@ -1,7 +1,7 @@
 [project]
-name = "repl-nix-workspace"
+name = "telegram-trading-bot"
 version = "0.1.0"
-description = "Bot trading"
+description = "Trading bot for crypto and market signals"
 requires-python = ">=3.11"
 dependencies = [
     "flask>=3.1.3",
