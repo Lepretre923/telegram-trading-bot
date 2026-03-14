@@ -3,14 +3,13 @@ from flask import Flask
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-# Modules internes
-from reports import full_report
-from alerts import crash, whale_alert
+from alerts import btc_crash, whale_alert
 from scanners import market_opportunity_scanner, liquidation_radar, manipulation_radar
 from analysis import market_analysis, btc_chart
 from signals import trading_signal
+from reports import full_report
 from intel import crypto_news
-from market_data import crypto_price, metal_price
+from market_data import crypto_price, metal_price, get_history_tf
 
 TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
 
@@ -19,73 +18,21 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return "Bot running"
-
-def run_flask():
-    app.run(host="0.0.0.0", port=8080)
-
-threading.Thread(target=run_flask).start()
+threading.Thread(target=lambda: app.run(host="0.0.0.0", port=8080)).start()
 
 # ---------------- TELEGRAM ----------------
-keyboard = [
-    ["💰 BTC Analyse","🪙 ETH Analyse"],
-    ["☀️ SOL Analyse","🥇 GOLD Analyse"],
-    ["🥈 SILVER Analyse","🤖 Analyse IA"],
-    ["📈 Signal trading","🚨 Crash alert"],
-    ["🐋 Whale alert","🔎 Scanner marché"],
-    ["📡 Radar liquidité","🧠 Radar manipulation"],
-    ["📊 Carte de trade","🧭 Carte institutionnelle"],
-    ["🧮 Probabilité trade","📊 Score marché"],
-    ["📊 Heatmap crypto","📡 Auto Watchlist"],
-    ["🧠 Analyse multi crypto","📆 Agenda économique"],
-    ["🌅 Briefing marché","📋 Rapport complet"]
-]
-
+keyboard = [["💰 BTC Analyse","🪙 ETH Analyse"],["☀️ SOL Analyse","🥇 GOLD Analyse"]]
 markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🤖 Bot trading actif\n\nChoisis une analyse :", reply_markup=markup)
+    await update.message.reply_text("🤖 Bot trading actif\nChoisis une analyse :", reply_markup=markup)
 
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
-
-    if text == "📋 Rapport complet":
-        await update.message.reply_text(full_report())
-    elif text == "🚨 Crash alert":
-        await update.message.reply_text(crash())
-    elif text == "🐋 Whale alert":
-        await update.message.reply_text(whale_alert())
-    elif text == "📈 Signal trading":
-        await update.message.reply_text(trading_signal())
-    elif text == "💰 BTC Analyse":
+    if text == "💰 BTC Analyse":
         await update.message.reply_text(btc_chart())
-    elif text == "🔎 Scanner marché":
-        await update.message.reply_text(market_opportunity_scanner())
-    elif text == "📡 Radar liquidité":
-        await update.message.reply_text(liquidation_radar())
-    elif text == "🧠 Radar manipulation":
-        await update.message.reply_text(manipulation_radar())
-    elif text == "🤖 Analyse IA":
-        await update.message.reply_text(market_analysis())
-    elif text == "📊 Score marché":
-        await update.message.reply_text(market_analysis())
-    elif text == "🧭 Carte institutionnelle":
-        await update.message.reply_text(market_analysis())
-    elif text == "🪙 ETH Analyse":
-        price = crypto_price("ETH")
-        await update.message.reply_text(f"ETH Price: {price}$")
-    elif text == "☀️ SOL Analyse":
-        price = crypto_price("SOL")
-        await update.message.reply_text(f"SOL Price: {price}$")
-    elif text == "🥇 GOLD Analyse":
-        price = metal_price("XAU")
-        await update.message.reply_text(f"GOLD Price: {price}$")
-    elif text == "🥈 SILVER Analyse":
-        price = metal_price("XAG")
-        await update.message.reply_text(f"SILVER Price: {price}$")
-    elif text == "🤖 Analyse multi crypto":
-        await update.message.reply_text(f"BTC: {crypto_price('BTC')}$\nETH: {crypto_price('ETH')}$\nSOL: {crypto_price('SOL')}$")
-    elif text == "📆 Agenda économique":
-        await update.message.reply_text(crypto_news())
+    elif text == "📋 Rapport complet":
+        await update.message.reply_text(full_report())
 
 def main():
     app_bot = ApplicationBuilder().token(TOKEN).build()
