@@ -1,0 +1,166 @@
+import random
+from market_data import crypto_price, metal_price, get_history_tf
+
+SCAN_ASSETS = [
+    "BTC","ETH","SOL","BNB","XRP",
+    "ADA","DOGE","AVAX","MATIC"
+]
+
+SEP = "━━━━━━━━━━━━━━"
+
+# ---------------- OPPORTUNITÉS MARCHÉ ----------------
+def market_opportunity_scanner():
+    results = []
+    for asset in SCAN_ASSETS:
+        price = crypto_price(asset)
+        rsi = random.randint(30, 70)
+        momentum = random.randint(-5, 5)
+        score = 50 + momentum*5
+        if rsi > 60: score += 10
+        if rsi < 40: score -= 10
+        results.append((asset, score, price))
+    results = sorted(results, key=lambda x: x[1], reverse=True)
+    message = f"🚀 *SCANNER OPPORTUNITÉS*\n\n{SEP}\n"
+    for asset, score, price in results[:5]:
+        message += f"""
+{asset}
+
+Prix : {price:.0f}$
+Score : {score}/100
+
+{SEP}
+"""
+    message += "\nGuide\n\nSurveiller les actifs avec le score le plus élevé."
+    return message
+
+# ---------------- STABLECOIN FLOW ----------------
+def stablecoin_flow():
+    inflow = random.randint(100, 900)
+    outflow = random.randint(100, 900)
+    net = inflow - outflow
+    situation = "Neutre"
+    if net > 200: situation = "🟢 Entrée de capitaux"
+    elif net < -200: situation = "🔴 Sortie de capitaux"
+    sign = "+" if net >= 0 else ""
+    return f"""
+💵 STABLECOIN FLOW
+
+Entrées
+{inflow} M$
+
+Sorties
+{outflow} M$
+
+Flux net
+{sign}{net} M$
+
+Situation
+{situation}
+"""
+
+# ---------------- VOLUME PROFILE ----------------
+def volume_profile():
+    asset = random.choice(["BTC", "ETH"])
+    price = crypto_price(asset)
+    poc = price * 0.99
+    high_volume = price * 1.01
+    low_volume = price * 0.97
+    activity = random.randint(40, 90)
+    situation = "Volume équilibré"
+    if activity > 70: situation = "📈 Forte activité marché"
+    elif activity < 50: situation = "📉 Faible activité"
+    return f"""
+📊 VOLUME PROFILE
+
+{asset}
+
+Prix
+{price:.0f}
+
+Point of Control
+{poc:.0f}
+
+High Volume Zone
+{high_volume:.0f}
+
+Low Volume Zone
+{low_volume:.0f}
+
+Activité marché
+{activity}
+
+Situation
+{situation}
+"""
+
+# ---------------- LIQUIDATION MAP ----------------
+def liquidation_map():
+    asset = random.choice(["BTC", "ETH"])
+    price = crypto_price(asset)
+    long_liq = price * 0.95
+    short_liq = price * 1.05
+    risk = random.randint(30, 90)
+    situation = "Neutre"
+    if risk > 70: situation = "⚠️ Forte zone liquidation"
+    elif risk < 40: situation = "🟢 Faible pression liquidation"
+    return f"""
+🔥 CARTE LIQUIDATIONS
+
+Actif
+{asset}
+
+Prix actuel
+{price:.0f}$
+
+━━━━━━━━━━━━━━
+
+Zone liquidation LONG
+{long_liq:.0f}$
+
+Zone liquidation SHORT
+{short_liq:.0f}$
+
+━━━━━━━━━━━━━━
+
+Score risque
+{risk}/100
+
+Situation
+{situation}
+
+━━━━━━━━━━━━━━
+
+Analyse
+Les zones de liquidation attirent souvent le prix avant un retournement.
+"""
+
+# ---------------- RADAR MANIPULATION ----------------
+def manipulation_radar():
+    asset = random.choice(["BTC", "ETH", "SOL"])
+    price = crypto_price(asset)
+    trap = random.choice([
+        "Possible fake breakout",
+        "Possible stop hunt",
+        "Zone manipulation probable",
+        "Marché stable"
+    ])
+    risk = random.randint(10, 90)
+    danger = "🟡 Risque modéré"
+    if risk > 70: danger = "🔴 Forte manipulation possible"
+    elif risk < 30: danger = "🟢 Faible manipulation"
+    risque_label = "Élevé" if risk > 70 else ("Faible" if risk < 30 else "Modéré")
+    return f"""
+🧠 RADAR MANIPULATION
+
+Score manipulation
+{risk} / 100
+
+Situation
+{trap}
+
+Risque
+{risque_label}
+
+Guide
+Attendre confirmation avant entrée.
+"""
