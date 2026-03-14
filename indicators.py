@@ -1,99 +1,80 @@
-import random
+import pandas as pd
 
-# ---------------- RSI ----------------
+# -------------------- RSI --------------------
 def calculate_rsi(prices, period=14):
+    """
+    Calcul du RSI (Relative Strength Index)
+    :param prices: liste ou pandas Series des prix
+    :param period: période de calcul (défaut 14)
+    :return: RSI arrondi à 2 décimales
+    """
     if len(prices) < period + 1:
         return None
-    gains, losses = [], []
-    for i in range(1, len(prices)):
-        diff = prices[i] - prices[i-1]
-        gains.append(max(diff, 0))
-        losses.append(max(-diff, 0))
-    avg_gain = sum(gains[-period:])/period
-    avg_loss = sum(losses[-period:])/period
+
+    deltas = pd.Series(prices).diff()
+    gains = deltas.clip(lower=0)
+    losses = -deltas.clip(upper=0)
+
+    avg_gain = gains.rolling(period).mean().iloc[-1]
+    avg_loss = losses.rolling(period).mean().iloc[-1]
+
     if avg_loss == 0:
-        return 100
+        return 100.0
+
     rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
     return round(rsi, 2)
 
-# ---------------- MOVING AVERAGES ----------------
-def moving_average(prices, period):
+
+# -------------------- SMA / EMA --------------------
+def simple_moving_average(prices, period=20):
+    """
+    Moyenne mobile simple
+    """
     if len(prices) < period:
         return None
-    return round(sum(prices[-period:]) / period, 2)
+    return round(pd.Series(prices).rolling(period).mean().iloc[-1], 2)
 
-def ema(prices, period=14):
+def exponential_moving_average(prices, period=20):
+    """
+    Moyenne mobile exponentielle
+    """
     if len(prices) < period:
         return None
-    k = 2 / (period + 1)
-    ema_values = [sum(prices[:period])/period]
-    for price in prices[period:]:
-        ema_values.append(price * k + ema_values[-1] * (1 - k))
-    return round(ema_values[-1], 2)
+    return round(pd.Series(prices).ewm(span=period, adjust=False).mean().iloc[-1], 2)
 
-# ---------------- MACD ----------------
-def macd(prices, short_period=12, long_period=26, signal_period=9):
-    if len(prices) < long_period:
+
+# -------------------- MACD --------------------
+def calculate_macd(prices, fast=12, slow=26, signal=9):
+    """
+    MACD = EMA(fast) - EMA(slow)
+    """
+    if len(prices) < slow + signal:
         return None, None
-    short_ema = ema(prices, short_period)
-    long_ema_val = ema(prices, long_period)
-    macd_line = short_ema - long_ema_val
-    signal_line = ema([macd_line]*signal_period, signal_period)  # approximation
-    return round(macd_line,2), round(signal_line,2)
 
-# ---------------- BOLLINGER BANDS ----------------
-def bollinger_bands(prices, period=20, std_dev_factor=2):
+    df = pd.Series(prices)
+    ema_fast = df.ewm(span=fast, adjust=False).mean()
+    ema_slow = df.ewm(span=slow, adjust=False).mean()
+
+    macd_line = ema_fast - ema_slow
+    signal_line = macd_line.ewm(span=signal, adjust=False).mean()
+
+    return round(macd_line.iloc[-1], 2), round(signal_line.iloc[-1], 2)
+
+
+# -------------------- Bollinger Bands --------------------
+def bollinger_bands(prices, period=20, std_dev=2):
+    """
+    Bandes de Bollinger
+    :return: (middle, upper, lower)
+    """
     if len(prices) < period:
         return None, None, None
-    sma = moving_average(prices[-period:], period)
-    mean = sma
-    variance = sum((p - mean)**2 for p in prices[-period:])/period
-    std_dev = variance**0.5
-    upper = mean + std_dev_factor*std_dev
-    lower = mean - std_dev_factor*std_dev
-    return round(upper,2), round(mean,2), round(lower,2)
 
-# ---------------- STOCHASTIC OSCILLATOR ----------------
-def stochastic_oscillator(prices, period=14):
-    if len(prices) < period:
-        return None
-    high = max(prices[-period:])
-    low = min(prices[-period:])
-    if high - low == 0:
-        return 50
-    k = ((prices[-1] - low)/(high - low)) * 100
-    return round(k,2)
+    df = pd.Series(prices)
+    sma = df.rolling(period).mean().iloc[-1]
+    std = df.rolling(period).std().iloc[-1]
 
-# ---------------- TREND ANALYSIS ----------------
-def simple_trend(prices):
-    if len(prices) < 2:
-        return "Neutral"
-    if prices[-1] > prices[-2]:
-        return "Bullish"
-    elif prices[-1] < prices[-2]:
-        return "Bearish"
-    else:
-        return "Neutral"
-
-# ---------------- GENERATE INDICATOR REPORT ----------------
-def indicator_report(prices):
-    rsi_val = calculate_rsi(prices)
-    sma_val = moving_average(prices, period=20)
-    ema_val = ema(prices, period=20)
-    macd_line, macd_signal = macd(prices)
-    upper, middle, lower = bollinger_bands(prices)
-    stoch = stochastic_oscillator(prices)
-    trend = simple_trend(prices)
-
-    return f"""
-📊 INDICATORS REPORT
-
-RSI: {rsi_val}
-SMA(20): {sma_val}
-EMA(20): {ema_val}
-MACD: {macd_line} | Signal: {macd_signal}
-Bollinger Bands: Upper {upper} | Middle {middle} | Lower {lower}
-Stochastic %K: {stoch}
-Trend: {trend}
-"""
+    upper = sma + std_dev * std
+    lower = sma - std_dev * std
+    return round(sma, 2), round(upper, 2), round(lower, 2)
