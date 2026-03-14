@@ -1,22 +1,14 @@
 [project]
 name = "repl-nix-workspace"
 version = "0.1.0"
-description = "Bot de trading et analyse crypto complet"
+description = "Bot trading crypto avec analyse, signaux et scanner"
 requires-python = ">=3.11"
-
 dependencies = [
-    "flask==3.1.3",
-    "pandas==3.0.1",
-    "python-telegram-bot==22.6",
-    "requests==2.32.5",
-    "schedule==1.2.2",
-    "ta==0.11.0",
-    "telegram==0.0.1"
+    "flask>=3.1.3",
+    "pandas>=3.0.1",
+    "python-telegram-bot>=22.6",
+    "requests>=2.32.5",
+    "schedule>=1.2.2",
+    "ta>=0.11.0",
+    "telegram>=0.0.1"
 ]
-
-[build-system]
-requires = ["setuptools>=65.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.uv]
-lock-version = "1.0"
