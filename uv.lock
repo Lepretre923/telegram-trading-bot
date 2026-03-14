@@ -1,59 +1,27 @@
-# uv.lock généré pour projet Replit/Render
-[package]
+[[package]]
 name = "flask"
 version = "3.1.3"
-dependencies = [
-    "Werkzeug >=2.3.0,<3.1",
-    "Jinja2 >=3.1.0,<4.0",
-    "click >=8.1.3,<9.0",
-    "itsdangerous >=2.1.2,<3.0",
-]
 
-[package]
+[[package]]
 name = "pandas"
 version = "3.0.1"
-dependencies = [
-    "numpy >=1.25.0,<2.0",
-    "python-dateutil >=2.9.2,<3.0",
-    "pytz >=2023.3,<2024.0",
-]
 
-[package]
+[[package]]
 name = "python-telegram-bot"
 version = "22.6"
-dependencies = [
-    "aiohttp >=3.8.1,<4.0",
-    "certifi >=2023.5.7,<2024.0",
-    "charset-normalizer >=3.1.0,<4.0",
-    "urllib3 >=2.0.3,<3.0",
-]
 
-[package]
+[[package]]
 name = "requests"
 version = "2.32.5"
-dependencies = [
-    "certifi >=2023.5.7,<2024.0",
-    "charset-normalizer >=3.1.0,<4.0",
-    "idna >=3.4,<4.0",
-    "urllib3 >=2.0.3,<3.0",
-]
 
-[package]
+[[package]]
 name = "schedule"
 version = "1.2.2"
 
-[package]
+[[package]]
 name = "ta"
 version = "0.11.0"
-dependencies = [
-    "numpy >=1.25.0,<2.0",
-    "pandas >=1.5.0,<4.0",
-]
 
-[package]
+[[package]]
 name = "telegram"
 version = "0.0.1"
-
-[metadata]
-python_version = ">=3.11"
-lock_version = "1.0"
