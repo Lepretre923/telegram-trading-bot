@@ -4,7 +4,29 @@ from threading import Thread
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
+# IMPORTS DE TES MODULES
+from reports import (
+    analyse, btc_analysis, signal, scanner, liquidity, trade_map,
+    institutional, probability, multi_timeframe, market_score, ai,
+    heatmap, watchlist, multi, agenda, briefing, report
+)
+
+from scanners import (
+    liquidation_radar, macro_news, manipulation_radar, whale_radar,
+    top_opportunities, market_sentiment, market_levels, market_pressure,
+    top_movers, market_correlation, stop_hunt_radar, volatility_radar,
+    crypto_market_index, market_opportunity_scanner, full_market_scan
+)
+
+from alerts import crash, whale
+
+from market_data import (
+    crypto_price, metal_price, fear_greed, funding_rate,
+    open_interest, global_market
+)
+
 TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
+
 
 # -------- SERVEUR WEB POUR RENDER --------
 
@@ -14,10 +36,13 @@ app = Flask(__name__)
 def home():
     return "Bot running"
 
+
 def run_web():
     app.run(host="0.0.0.0", port=8080)
 
+
 Thread(target=run_web).start()
+
 
 # -------- MENU TELEGRAM --------
 
@@ -37,6 +62,7 @@ keyboard = [
 
 markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+
 # -------- COMMANDES --------
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -45,134 +71,88 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=markup
     )
 
+
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     t = update.message.text
 
     if t == "💰 BTC Analyse":
-        msg = """
-💰 ANALYSE BTC
-
-Structure marché
-Support : 67000 $
-Résistance : 70500 $
-
-RSI : 61
-Momentum : +3
-Volatilité : 6 %
-
-Tendance
-Haussière court terme
-
-Guide
-Attendre retour sur support avant entrée.
-"""
-        await update.message.reply_text(msg)
+        await update.message.reply_text(btc_analysis())
 
     elif t == "🪙 ETH Analyse":
-        await update.message.reply_text("Analyse ETH en cours...")
+        await update.message.reply_text(analyse("ETH", crypto_price("ETH")))
 
     elif t == "☀️ SOL Analyse":
-        await update.message.reply_text("Analyse SOL en cours...")
+        await update.message.reply_text(analyse("SOL", crypto_price("SOL")))
 
     elif t == "🥇 GOLD Analyse":
-        await update.message.reply_text("Analyse Gold en cours...")
+        await update.message.reply_text(analyse("Gold", metal_price("XAU")))
 
     elif t == "🥈 SILVER Analyse":
-        await update.message.reply_text("Analyse Silver en cours...")
+        await update.message.reply_text(analyse("Silver", metal_price("XAG")))
 
     elif t == "📈 Signal trading":
-        await update.message.reply_text(
-            "📈 Signal détecté\n\nEntrée : attendre confirmation tendance."
-        )
+        await update.message.reply_text(signal())
 
     elif t == "🚨 Crash alert":
-        await update.message.reply_text(
-            "🚨 Risque de correction détecté.\n\nSurveiller supports majeurs."
-        )
+        await update.message.reply_text(crash())
 
     elif t == "🐋 Whale alert":
-        await update.message.reply_text(
-            "🐋 Mouvement whale détecté.\nVolatilité possible."
-        )
+        await update.message.reply_text(whale())
 
     elif t == "🔎 Scanner marché":
-        await update.message.reply_text(
-            "🔎 Analyse du marché en cours..."
-        )
+        await update.message.reply_text(scanner())
 
     elif t == "📡 Radar liquidité":
-        await update.message.reply_text(
-            "📡 Zones de liquidité détectées autour des niveaux clés."
-        )
+        await update.message.reply_text(liquidity())
 
     elif t == "🧠 Radar manipulation":
-        await update.message.reply_text(
-            "🧠 Risque manipulation : modéré."
-        )
+        await update.message.reply_text(manipulation_radar())
 
     elif t == "📊 Carte de trade":
-        await update.message.reply_text(
-            "📊 Carte de trade générée."
-        )
+        await update.message.reply_text(trade_map())
 
     elif t == "🧭 Carte institutionnelle":
-        await update.message.reply_text(
-            "🧭 Flux institutionnels analysés."
-        )
+        await update.message.reply_text(institutional())
 
     elif t == "🧮 Probabilité trade":
-        await update.message.reply_text(
-            "🧮 Probabilité du setup : 67%"
-        )
+        await update.message.reply_text(probability())
 
     elif t == "📊 Score marché":
-        await update.message.reply_text(
-            "📊 Score marché global : 62/100"
-        )
+        await update.message.reply_text(market_score())
 
     elif t == "📊 Heatmap crypto":
-        await update.message.reply_text(
-            "📊 Heatmap crypto analysée."
-        )
+        await update.message.reply_text(heatmap())
 
     elif t == "📡 Auto Watchlist":
-        await update.message.reply_text(
-            "📡 Actifs à surveiller : BTC / ETH / SOL"
-        )
+        await update.message.reply_text(watchlist())
 
     elif t == "🧠 Analyse multi crypto":
-        await update.message.reply_text(
-            "🧠 Analyse multi crypto en cours."
-        )
+        await update.message.reply_text(multi())
 
     elif t == "📆 Agenda économique":
-        await update.message.reply_text(
-            "📆 Agenda économique\nhttps://www.forexfactory.com/calendar"
-        )
+        await update.message.reply_text(agenda())
 
     elif t == "🌅 Briefing marché":
-        await update.message.reply_text(
-            "🌅 Briefing marché : volatilité modérée."
-        )
+        await update.message.reply_text(briefing())
 
     elif t == "📋 Rapport complet":
-        await update.message.reply_text(
-            "📋 Rapport complet généré."
-        )
+        await update.message.reply_text(report())
+
 
 # -------- LANCEMENT BOT --------
 
 async def main():
 
-    app_bot = ApplicationBuilder().token(TOKEN).build()
+    bot = ApplicationBuilder().token(TOKEN).build()
 
-    app_bot.add_handler(CommandHandler("start", start))
-    app_bot.add_handler(MessageHandler(filters.TEXT, message))
+    bot.add_handler(CommandHandler("start", start))
+    bot.add_handler(MessageHandler(filters.TEXT, message))
 
     print("BOT ACTIF")
 
-    await app_bot.run_polling()
+    await bot.run_polling()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
