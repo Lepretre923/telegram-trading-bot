@@ -3,14 +3,15 @@ from flask import Flask
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-# IMPORT DES MODULES INTERNES
-from alerts import btc_crash, whale_alert
+# ---------------- IMPORT DES MODULES ----------------
+from alerts import btc_crash, whale_alert, crypto_news
 from scanners import market_opportunity_scanner, liquidation_radar, manipulation_radar
 from analysis import market_analysis, btc_chart
 from signals import trading_signal
 from reports import full_report
-from intel import crypto_news
+from market_data import crypto_price, metal_price
 
+# ---------------- TELEGRAM TOKEN ----------------
 TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
 
 # ---------------- FLASK ----------------
@@ -25,7 +26,7 @@ def run_flask():
 
 threading.Thread(target=run_flask).start()
 
-# ---------------- MENU TELEGRAM ----------------
+# ---------------- TELEGRAM MENU ----------------
 keyboard = [
     ["💰 BTC Analyse","🪙 ETH Analyse"],
     ["☀️ SOL Analyse","🥇 GOLD Analyse"],
@@ -39,7 +40,6 @@ keyboard = [
     ["🧠 Analyse multi crypto","📆 Agenda économique"],
     ["🌅 Briefing marché","📋 Rapport complet"]
 ]
-
 markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 # ---------------- COMMANDES ----------------
@@ -53,26 +53,38 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     if text == "💰 BTC Analyse":
-        await update.message.reply_text(btc_chart())
+        await update.message.reply_text(market_analysis())
+    elif text == "🪙 ETH Analyse":
+        await update.message.reply_text(f"ETH Price: {crypto_price('ETH')}$")
+    elif text == "☀️ SOL Analyse":
+        await update.message.reply_text(f"SOL Price: {crypto_price('SOL')}$")
+    elif text == "🥇 GOLD Analyse":
+        await update.message.reply_text(f"GOLD Price: {metal_price('XAU')}$")
+    elif text == "🥈 SILVER Analyse":
+        await update.message.reply_text(f"SILVER Price: {metal_price('XAG')}$")
     elif text == "📈 Signal trading":
         await update.message.reply_text(trading_signal())
     elif text == "🚨 Crash alert":
         await update.message.reply_text(btc_crash())
     elif text == "🐋 Whale alert":
         await update.message.reply_text(whale_alert())
-    elif text == "📊 Score marché":
-        await update.message.reply_text(market_analysis())
+    elif text == "🔎 Scanner marché":
+        await update.message.reply_text(market_opportunity_scanner())
+    elif text == "📡 Radar liquidité":
+        await update.message.reply_text(liquidation_radar())
+    elif text == "🧠 Radar manipulation":
+        await update.message.reply_text(manipulation_radar())
     elif text == "📋 Rapport complet":
         await update.message.reply_text(full_report())
     else:
-        await update.message.reply_text("Fonctionnalité en développement...")
+        await update.message.reply_text("Commande non reconnue, choisis dans le menu.")
 
 # ---------------- LANCEMENT BOT ----------------
 def main():
     app_bot = ApplicationBuilder().token(TOKEN).build()
     app_bot.add_handler(CommandHandler("start", start))
     app_bot.add_handler(MessageHandler(filters.TEXT, message))
-    print("BOT ACTIF")
+    print("BOT ACTIF SUR TELEGRAM ET RENDER")
     app_bot.run_polling()
 
 if __name__ == "__main__":
