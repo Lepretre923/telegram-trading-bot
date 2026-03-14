@@ -12,4 +12,5 @@ def market_analysis():
     return f"📊 AI MARKET ANALYSIS\nRSI: {rsi}\nMACD: {macd}\nSentiment: {sentiment}\nScore: {score}/100"
 
 def btc_chart():
-    return "📈 BTC CHART\nhttps://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT"
+    price = random.randint(27000, 32000)
+    return f"📈 BTC CHART\nPrice: {price}$\nhttps://www.tradingview.com/chart/?symbol=BINANCE:BTCUSDT"
