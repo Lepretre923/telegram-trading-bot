@@ -3,16 +3,18 @@ from flask import Flask
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-# IMPORTS DE TES MODULES
+# IMPORTS MODULES
 from reports import *
 from scanners import *
 from alerts import *
 from market_data import *
+from intel import *
+from analysis import *
 
 TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
 
 
-# ---------------- FLASK (RENDER) ----------------
+# ---------------- FLASK (RENDER KEEP ALIVE) ----------------
 
 app = Flask(__name__)
 
@@ -50,8 +52,9 @@ markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 # ---------------- COMMANDES ----------------
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text(
-        "🤖 Bot trading actif\n\nChoisis une analyse :",
+        "🤖 Trading AI Bot\n\nSelect an analysis:",
         reply_markup=markup
     )
 
@@ -81,16 +84,20 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(analyse("Silver", metal_price("XAG")))
 
 
+    elif text == "🤖 Analyse IA":
+        await update.message.reply_text(market_analysis())
+
+
     elif text == "📈 Signal trading":
         await update.message.reply_text(signal())
 
 
     elif text == "🚨 Crash alert":
-        await update.message.reply_text(crash())
+        await update.message.reply_text(btc_crash())
 
 
     elif text == "🐋 Whale alert":
-        await update.message.reply_text(whale())
+        await update.message.reply_text(whale_alert())
 
 
     elif text == "🔎 Scanner marché":
@@ -149,14 +156,14 @@ async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def main():
 
-    app_bot = ApplicationBuilder().token(TOKEN).build()
+    bot = ApplicationBuilder().token(TOKEN).build()
 
-    app_bot.add_handler(CommandHandler("start", start))
-    app_bot.add_handler(MessageHandler(filters.TEXT, message))
+    bot.add_handler(CommandHandler("start", start))
+    bot.add_handler(MessageHandler(filters.TEXT, message))
 
     print("BOT ACTIF")
 
-    app_bot.run_polling()
+    bot.run_polling()
 
 
 if __name__ == "__main__":
