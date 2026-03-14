@@ -1,25 +1,33 @@
-from market import get_price,top_crypto
-from analysis import analyse
-from signals import get_signal
-from intel import market_intel,market_scanner,sentiment_crypto
+# reports.py
+from analysis import market_analysis, btc_chart
+from signals import trading_signal
+from intel import crypto_news
 
-def market_report():
+def full_report():
+    """
+    Génère un rapport complet incluant :
+    - Analyse du marché (RSI, MACD, Sentiment)
+    - Graphique BTC
+    - Signal trading
+    - Dernières news crypto
+    """
+    report = f"""
+📋 GLOBAL MARKET REPORT
 
-    msg="📊 Rapport complet marché\n\n"
+--- Market Analysis ---
+{market_analysis()}
 
-    msg+=get_price("BTC")+"\n"
-    msg+=get_price("ETH")+"\n\n"
+--- BTC Chart ---
+{btc_chart()}
 
-    msg+=analyse("BTC")+"\n"
+--- Trading Signal ---
+{trading_signal()}
 
-    msg+=get_signal()+"\n"
+--- Latest Crypto News ---
+{crypto_news()}
 
-    msg+=market_intel()+"\n"
-
-    msg+=market_scanner()+"\n"
-
-    msg+=sentiment_crypto()+"\n"
-
-    msg+=top_crypto()
-
-    return msg
+Guide:
+- Comparer les analyses et signaux avant toute action.
+- Vérifier les zones de support/résistance et liquidité avant trade.
+"""
+    return report
