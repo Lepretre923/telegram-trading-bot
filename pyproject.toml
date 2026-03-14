@@ -1,7 +1,7 @@
 [project]
-name = "telegram-trading-bot"
+name = "repl-nix-workspace"
 version = "0.1.0"
-description = "Trading bot for crypto and market signals"
+description = "Bot trading et analyse crypto/métaux"
 requires-python = ">=3.11"
 dependencies = [
     "flask>=3.1.3",
@@ -9,6 +9,5 @@ dependencies = [
     "python-telegram-bot>=22.6",
     "requests>=2.32.5",
     "schedule>=1.2.2",
-    "ta>=0.11.0",
-    "telegram>=0.0.1"
+    "ta>=0.11.0"
 ]
