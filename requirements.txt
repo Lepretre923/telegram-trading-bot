@@ -1,18 +1,12 @@
-# Serveur web
-flask==3.0.0
+# Serveur / bot
+flask
+python-telegram-bot
 
-# Bot Telegram
-python-telegram-bot==20.5
+# Analyse / data
+pandas
+requests
+numpy
 
-# Requêtes HTTP / API
-requests==2.32.0
-
-# Analyse et calcul de données
-pandas==2.1.1
-numpy==1.26.2
-
-# Indicateurs techniques
-ta==0.10.3
-
-# Autres dépendances possibles
-python-dotenv==1.0.0
+# Autres utiles si tu fais du trading / finance
+matplotlib
+yfinance
