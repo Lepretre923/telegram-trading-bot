@@ -1,5 +1,18 @@
-flask
-requests
-pandas
-numpy
-python-telegram-bot
+# Serveur web
+flask==3.0.0
+
+# Bot Telegram
+python-telegram-bot==20.5
+
+# Requêtes HTTP / API
+requests==2.32.0
+
+# Analyse et calcul de données
+pandas==2.1.1
+numpy==1.26.2
+
+# Indicateurs techniques
+ta==0.10.3
+
+# Autres dépendances possibles
+python-dotenv==1.0.0
