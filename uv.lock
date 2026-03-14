@@ -1,27 +1,17 @@
-[[package]]
-name = "flask"
+[package.flask]
 version = "3.1.3"
-
-[[package]]
-name = "pandas"
+[package.pandas]
 version = "3.0.1"
-
-[[package]]
-name = "python-telegram-bot"
+[package.python-telegram-bot]
 version = "22.6"
-
-[[package]]
-name = "requests"
+[package.requests]
 version = "2.32.5"
-
-[[package]]
-name = "schedule"
+[package.schedule]
 version = "1.2.2"
-
-[[package]]
-name = "ta"
+[package.ta]
 version = "0.11.0"
-
-[[package]]
-name = "telegram"
+[package.telegram]
 version = "0.0.1"
+
+[meta]
+python = ">=3.11"
