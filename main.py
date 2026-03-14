@@ -1,34 +1,18 @@
-import asyncio
+import threading
 from flask import Flask
-from threading import Thread
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
 # IMPORTS DE TES MODULES
-from reports import (
-    analyse, btc_analysis, signal, scanner, liquidity, trade_map,
-    institutional, probability, multi_timeframe, market_score, ai,
-    heatmap, watchlist, multi, agenda, briefing, report
-)
-
-from scanners import (
-    liquidation_radar, macro_news, manipulation_radar, whale_radar,
-    top_opportunities, market_sentiment, market_levels, market_pressure,
-    top_movers, market_correlation, stop_hunt_radar, volatility_radar,
-    crypto_market_index, market_opportunity_scanner, full_market_scan
-)
-
-from alerts import crash, whale
-
-from market_data import (
-    crypto_price, metal_price, fear_greed, funding_rate,
-    open_interest, global_market
-)
+from reports import *
+from scanners import *
+from alerts import *
+from market_data import *
 
 TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
 
 
-# -------- SERVEUR WEB POUR RENDER --------
+# ---------------- FLASK (RENDER) ----------------
 
 app = Flask(__name__)
 
@@ -37,14 +21,14 @@ def home():
     return "Bot running"
 
 
-def run_web():
+def run_flask():
     app.run(host="0.0.0.0", port=8080)
 
 
-Thread(target=run_web).start()
+threading.Thread(target=run_flask).start()
 
 
-# -------- MENU TELEGRAM --------
+# ---------------- MENU TELEGRAM ----------------
 
 keyboard = [
 ["💰 BTC Analyse","🪙 ETH Analyse"],
@@ -63,7 +47,7 @@ keyboard = [
 markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 
-# -------- COMMANDES --------
+# ---------------- COMMANDES ----------------
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -74,85 +58,106 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    t = update.message.text
+    text = update.message.text
 
-    if t == "💰 BTC Analyse":
+
+    if text == "💰 BTC Analyse":
         await update.message.reply_text(btc_analysis())
 
-    elif t == "🪙 ETH Analyse":
+
+    elif text == "🪙 ETH Analyse":
         await update.message.reply_text(analyse("ETH", crypto_price("ETH")))
 
-    elif t == "☀️ SOL Analyse":
+
+    elif text == "☀️ SOL Analyse":
         await update.message.reply_text(analyse("SOL", crypto_price("SOL")))
 
-    elif t == "🥇 GOLD Analyse":
+
+    elif text == "🥇 GOLD Analyse":
         await update.message.reply_text(analyse("Gold", metal_price("XAU")))
 
-    elif t == "🥈 SILVER Analyse":
+
+    elif text == "🥈 SILVER Analyse":
         await update.message.reply_text(analyse("Silver", metal_price("XAG")))
 
-    elif t == "📈 Signal trading":
+
+    elif text == "📈 Signal trading":
         await update.message.reply_text(signal())
 
-    elif t == "🚨 Crash alert":
+
+    elif text == "🚨 Crash alert":
         await update.message.reply_text(crash())
 
-    elif t == "🐋 Whale alert":
+
+    elif text == "🐋 Whale alert":
         await update.message.reply_text(whale())
 
-    elif t == "🔎 Scanner marché":
+
+    elif text == "🔎 Scanner marché":
         await update.message.reply_text(scanner())
 
-    elif t == "📡 Radar liquidité":
+
+    elif text == "📡 Radar liquidité":
         await update.message.reply_text(liquidity())
 
-    elif t == "🧠 Radar manipulation":
+
+    elif text == "🧠 Radar manipulation":
         await update.message.reply_text(manipulation_radar())
 
-    elif t == "📊 Carte de trade":
+
+    elif text == "📊 Carte de trade":
         await update.message.reply_text(trade_map())
 
-    elif t == "🧭 Carte institutionnelle":
+
+    elif text == "🧭 Carte institutionnelle":
         await update.message.reply_text(institutional())
 
-    elif t == "🧮 Probabilité trade":
+
+    elif text == "🧮 Probabilité trade":
         await update.message.reply_text(probability())
 
-    elif t == "📊 Score marché":
+
+    elif text == "📊 Score marché":
         await update.message.reply_text(market_score())
 
-    elif t == "📊 Heatmap crypto":
+
+    elif text == "📊 Heatmap crypto":
         await update.message.reply_text(heatmap())
 
-    elif t == "📡 Auto Watchlist":
+
+    elif text == "📡 Auto Watchlist":
         await update.message.reply_text(watchlist())
 
-    elif t == "🧠 Analyse multi crypto":
+
+    elif text == "🧠 Analyse multi crypto":
         await update.message.reply_text(multi())
 
-    elif t == "📆 Agenda économique":
+
+    elif text == "📆 Agenda économique":
         await update.message.reply_text(agenda())
 
-    elif t == "🌅 Briefing marché":
+
+    elif text == "🌅 Briefing marché":
         await update.message.reply_text(briefing())
 
-    elif t == "📋 Rapport complet":
+
+    elif text == "📋 Rapport complet":
         await update.message.reply_text(report())
 
 
-# -------- LANCEMENT BOT --------
+# ---------------- LANCEMENT BOT ----------------
 
-async def main():
+def main():
 
-    bot = ApplicationBuilder().token(TOKEN).build()
+    app_bot = ApplicationBuilder().token(TOKEN).build()
 
-    bot.add_handler(CommandHandler("start", start))
-    bot.add_handler(MessageHandler(filters.TEXT, message))
+    app_bot.add_handler(CommandHandler("start", start))
+    app_bot.add_handler(MessageHandler(filters.TEXT, message))
 
     print("BOT ACTIF")
 
-    await bot.run_polling()
+    app_bot.run_polling()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
