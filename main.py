@@ -3,18 +3,18 @@ from flask import Flask
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-from alerts import btc_crash, whale_alert
-from scanners import (
-    market_opportunity_scanner, liquidation_radar, manipulation_radar, full_market_scan
-)
-from analysis import market_analysis, btc_chart
-from signals import trading_signal
+# ---- IMPORTS DES MODULES ----
 from reports import full_report
+from scanners import market_opportunity_scanner, liquidation_radar, manipulation_radar
+from analysis import market_analysis, btc_chart
+from alerts import btc_crash, whale_alert
+from signals import trading_signal
 from intel import crypto_news
+from market_data import crypto_price, metal_price, get_history_tf
 
-TOKEN = "8764239542:AAFEkwls2LXhtSes1RyAT26i7LSKwnh0uGA"
+TOKEN = "TON_ANCIEN_TOKEN_ICI"  # Tu le remplaces par le nouveau
 
-# ---------------- FLASK ----------------
+# ---- FLASK (Render Keep-Alive) ----
 app = Flask(__name__)
 @app.route("/")
 def home():
@@ -22,10 +22,9 @@ def home():
 
 def run_flask():
     app.run(host="0.0.0.0", port=8080)
-
 threading.Thread(target=run_flask).start()
 
-# ---------------- TELEGRAM MENU ----------------
+# ---- MENU TELEGRAM ----
 keyboard = [
     ["💰 BTC Analyse","🪙 ETH Analyse"],
     ["☀️ SOL Analyse","🥇 GOLD Analyse"],
@@ -41,30 +40,24 @@ keyboard = [
 ]
 markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
-# ---------------- COMMANDES ----------------
+# ---- COMMANDES TELEGRAM ----
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🤖 Bot trading actif\n\nChoisis une analyse :", reply_markup=markup)
 
 async def message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
-
-    if text == "💰 BTC Analyse":
+    # Tu ajoutes toutes tes commandes comme tu avais
+    if text == "📋 Rapport complet":
+        await update.message.reply_text(full_report())
+    elif text == "💰 BTC Analyse":
         await update.message.reply_text(market_analysis())
-    elif text == "📈 Signal trading":
-        await update.message.reply_text(trading_signal())
     elif text == "🚨 Crash alert":
         await update.message.reply_text(btc_crash())
     elif text == "🐋 Whale alert":
         await update.message.reply_text(whale_alert())
-    elif text == "🔎 Scanner marché":
-        await update.message.reply_text(full_market_scan())
-    elif text == "📋 Rapport complet":
-        await update.message.reply_text(full_report())
-    # Tu peux continuer à ajouter tous tes boutons ici
-    else:
-        await update.message.reply_text("Option non disponible pour l'instant.")
+    # Continue pour toutes les autres touches
 
-# ---------------- LANCEMENT BOT ----------------
+# ---- LANCEMENT BOT ----
 def main():
     app_bot = ApplicationBuilder().token(TOKEN).build()
     app_bot.add_handler(CommandHandler("start", start))
