@@ -7,7 +7,14 @@ def crypto_price(asset):
     except:
         return 0
 
-def metal_price(symbol):
-    # Simulation, remplacer par API réelle si nécessaire
-    mapping = {"XAU": 1950, "XAG": 25}
-    return mapping.get(symbol, 0)
+def metal_price(asset):
+    try:
+        # Exemple pour XAU / XAG
+        return 1800 if asset=="XAU" else 25
+    except:
+        return 0
+
+def get_history_tf(asset, timeframe="1h"):
+    # Simulation historique prix
+    import random
+    return [crypto_price(asset) + random.randint(-50,50) for _ in range(24)]
