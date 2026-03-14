@@ -8,13 +8,5 @@ def crypto_price(asset):
         return 0
 
 def metal_price(asset):
-    try:
-        # Exemple pour XAU / XAG
-        return 1800 if asset=="XAU" else 25
-    except:
-        return 0
-
-def get_history_tf(asset, timeframe="1h"):
-    # Simulation historique prix
-    import random
-    return [crypto_price(asset) + random.randint(-50,50) for _ in range(24)]
+    prices = {"XAU": 2000, "XAG": 25}
+    return prices.get(asset, 0)
